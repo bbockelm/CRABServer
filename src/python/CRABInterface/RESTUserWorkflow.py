@@ -24,7 +24,7 @@ class RESTUserWorkflow(RESTEntity):
         self.allCMSNames = CMSSitesCache(cachetime=0, sites={})
 
     def _checkSite(self, site):
-        if site not in self.allCMSNames.sites and site not in DataWorkflow.sitewildcards:
+        if site not in self.allCMSNames.sites and site not in DataWorkflow.sitewildcards and site not in ["T1_US_FNAL_Buffer"]:
             excasync = ValueError("Remote output data site not valid")
             invalidp = InvalidParameter("The parameter %s is not in the list of known CMS sites %s" % (site, self.allCMSNames.sites), errobj = excasync)
             setattr(invalidp, 'trace', '')
