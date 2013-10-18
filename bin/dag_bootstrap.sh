@@ -3,6 +3,7 @@
 # 
 # This script bootstraps the WMCore environment
 #
+set -x
 echo "Beginning dag_bootstrap.sh (stdout)"
 echo "Beginning dag_bootstrap.sh (stderr)" 1>&2
 if [ "X$TASKWORKER_ENV" = "X" -a ! -e CRAB3.zip ]
@@ -21,9 +22,9 @@ then
 	fi
 
 	if [ "x$CRAB3_VERSION" = "x" ]; then
-		TARBALL_NAME=TaskManagerRun-$CRAB3_VERSION.tar.gz
-	else
 		TARBALL_NAME=TaskManagerRun.tar.gz
+	else
+		TARBALL_NAME=TaskManagerRun-$CRAB3_VERSION.tar.gz
 	fi
 
 	if [[ "X$CRAB_TASKMANAGER_TARBALL" == "X" ]]; then
@@ -55,18 +56,6 @@ then
 fi
 
 export PYTHONPATH=$PWD:$PWD/CRAB3.zip:$PYTHONPATH
-# This is for development-only, due to the rapid rate we're updating the TaskWorker files.
-# TODO: Remove the below lines before the first release.
-export PYTHONPATH=~/projects/CAFTaskWorker/src/python:$PYTHONPATH
-
-echo "Checking for classad hack at path $HOME/classad_hack_library on host ..."
-if [ -d ~/classad_hack_library ]; then
-    echo "Engaging classad hack in dag_bootstrap.sh"
-    export PYTHONPATH=$PYTHONPATH:~/classad_hack_library
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/classad_hack_library
-    echo "pythonpath: $PYTHONPATH"
-    echo "library path: $LD_LIBRARY_PATH"
-fi
 
 #if [[ "x$X509_USER_PROXY" = "x" ]]; then
 #    export X509_USER_PROXY=$(pwd)/user.proxy
@@ -100,4 +89,3 @@ echo "Printing current job ad..."
 cat $_CONDOR_JOB_AD
 echo "Now running the job in `pwd`..."
 exec python2.6 -m TaskWorker.TaskManagerBootstrap "$@"
-echo "Put this here because Brian hates code after execs :)"
